@@ -1,0 +1,1353 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Red Vecinal Digital · Prototipo funcional (TRL 5) para la prevención comunitaria del delito en Ibagué, Tolima">
+<title>Red Vecinal Digital · Ibagué</title>
+
+<!-- Tipografía: Inter (Google Fonts) -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<!-- Iconos: Font Awesome 6 (CDN) -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous">
+
+<style>
+/* =========================================================================
+   1. VARIABLES DE DISEÑO (paleta institucional)
+   ========================================================================= */
+:root{
+  --azul-900:#0b2545;
+  --azul-800:#13315c;
+  --azul-700:#1d4e89;
+  --azul-500:#2e6fbf;
+  --azul-100:#e8f0fb;
+  --gris-900:#1f2d3d;
+  --gris-600:#5b6b7d;
+  --gris-400:#9aa7b6;
+  --gris-200:#e3e8ef;
+  --gris-100:#f2f5f9;
+  --blanco:#ffffff;
+  --naranja:#e67e22;
+  --naranja-suave:#fdf1e6;
+  --verde:#1e8a4c;
+  --verde-suave:#e6f4ec;
+  --rojo:#c0392b;
+  --rojo-suave:#fbeae8;
+  --radio:14px;
+  --radio-sm:10px;
+  --sombra:0 1px 2px rgba(11,37,69,.06), 0 6px 18px rgba(11,37,69,.08);
+  --sombra-alta:0 12px 32px rgba(11,37,69,.18);
+  --transicion:all .25s cubic-bezier(.4,0,.2,1);
+  --fuente:"Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+/* =========================================================================
+   2. BASE
+   ========================================================================= */
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  font-family:var(--fuente);
+  color:var(--gris-900);
+  background:var(--gris-100);
+  -webkit-font-smoothing:antialiased;
+  line-height:1.5;
+}
+h1,h2,h3{margin:0;color:var(--azul-900);letter-spacing:-.01em}
+p{margin:0}
+button,input,select,textarea{font:inherit}
+button{cursor:pointer}
+[hidden]{display:none !important}
+
+/* =========================================================================
+   3. PANTALLA DE LOGIN
+   ========================================================================= */
+.login-screen{
+  min-height:100vh;
+  display:flex;align-items:center;justify-content:center;
+  padding:24px;
+  background:
+    radial-gradient(1200px 600px at 10% -10%, rgba(46,111,191,.45), transparent 60%),
+    radial-gradient(900px 500px at 110% 110%, rgba(29,78,137,.55), transparent 60%),
+    linear-gradient(160deg,var(--azul-900),var(--azul-800));
+}
+.login-card{
+  width:100%;max-width:440px;
+  background:var(--blanco);
+  border-radius:20px;
+  box-shadow:var(--sombra-alta);
+  overflow:hidden;
+  animation:subir .5s ease both;
+}
+.login-cabecera{
+  padding:30px 32px 24px;
+  text-align:center;
+  background:linear-gradient(135deg,var(--azul-700),var(--azul-900));
+  color:#fff;
+}
+.login-logo{
+  width:64px;height:64px;margin:0 auto 14px;
+  border-radius:18px;
+  display:grid;place-items:center;
+  background:rgba(255,255,255,.14);
+  font-size:28px;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.22);
+}
+.login-cabecera h1{color:#fff;font-size:1.35rem}
+.login-cabecera p{color:rgba(255,255,255,.8);font-size:.9rem;margin-top:4px}
+.login-cuerpo{padding:28px 32px 30px}
+
+.credenciales{
+  margin-bottom:22px;
+  padding:14px 16px;
+  background:var(--azul-100);
+  border:1px solid #d3e2f5;
+  border-radius:var(--radio-sm);
+}
+.credenciales-titulo{
+  display:flex;align-items:center;gap:8px;
+  font-size:.82rem;font-weight:700;color:var(--azul-700);
+  text-transform:uppercase;letter-spacing:.06em;
+  margin-bottom:10px;
+}
+.credencial{
+  width:100%;
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+  padding:10px 12px;margin-top:8px;
+  background:#fff;border:1px solid #d3e2f5;border-radius:8px;
+  text-align:left;color:var(--gris-900);
+  transition:var(--transicion);
+}
+.credencial:hover{border-color:var(--azul-500);transform:translateY(-1px);box-shadow:var(--sombra)}
+.credencial small{display:block;color:var(--gris-600);font-size:.78rem}
+.credencial code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.85rem;color:var(--azul-800);white-space:nowrap}
+.credencial .rol{font-weight:600;font-size:.9rem}
+.credencial i{color:var(--azul-500)}
+
+.campo{display:flex;flex-direction:column;gap:6px;margin-bottom:16px}
+.campo label{font-size:.85rem;font-weight:600;color:var(--gris-900)}
+.entrada{position:relative}
+.entrada>i.icono{
+  position:absolute;left:14px;top:50%;transform:translateY(-50%);
+  color:var(--gris-400);pointer-events:none;transition:var(--transicion);
+}
+.entrada input,.entrada select{padding-left:42px}
+.entrada:focus-within>i.icono{color:var(--azul-500)}
+
+input,select,textarea{
+  width:100%;
+  padding:13px 16px;
+  border:1.5px solid var(--gris-200);
+  border-radius:var(--radio-sm);
+  background:#fff;
+  color:var(--gris-900);
+  font-size:.95rem;
+  transition:var(--transicion);
+}
+input::placeholder,textarea::placeholder{color:var(--gris-400)}
+input:focus,select:focus,textarea:focus{
+  outline:none;
+  border-color:var(--azul-500);
+  box-shadow:0 0 0 4px rgba(46,111,191,.16);
+}
+textarea{min-height:120px;resize:vertical}
+input[readonly]{background:var(--gris-100);color:var(--gris-600)}
+
+.error-login{
+  display:flex;align-items:center;gap:8px;
+  margin-bottom:14px;padding:11px 14px;
+  background:var(--rojo-suave);color:var(--rojo);
+  border-radius:var(--radio-sm);font-size:.88rem;font-weight:500;
+  animation:temblar .4s ease;
+}
+
+/* =========================================================================
+   4. BOTONES
+   ========================================================================= */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  padding:12px 20px;border:0;border-radius:var(--radio-sm);
+  font-weight:600;font-size:.92rem;color:#fff;
+  background:linear-gradient(135deg,var(--azul-500),var(--azul-700));
+  box-shadow:0 4px 12px rgba(29,78,137,.25);
+  transition:var(--transicion);
+  white-space:nowrap;
+}
+.btn:hover{transform:translateY(-1px);box-shadow:0 8px 18px rgba(29,78,137,.3)}
+.btn:active{transform:translateY(0)}
+.btn:focus-visible{outline:3px solid rgba(46,111,191,.4);outline-offset:2px}
+.btn-bloque{width:100%;padding:14px 20px;font-size:1rem}
+.btn-sec{background:var(--gris-100);color:var(--azul-800);box-shadow:none;border:1px solid var(--gris-200)}
+.btn-sec:hover{background:var(--azul-100);box-shadow:none}
+.btn-ok{background:linear-gradient(135deg,#27ae60,var(--verde));box-shadow:0 4px 12px rgba(30,138,76,.25)}
+.btn-peligro{background:linear-gradient(135deg,#e05a4b,var(--rojo));box-shadow:0 4px 12px rgba(192,57,43,.25)}
+.btn-pequeno{padding:8px 12px;font-size:.84rem;border-radius:8px}
+.btn-fantasma{background:transparent;color:rgba(255,255,255,.9);box-shadow:none;border:1px solid rgba(255,255,255,.3)}
+.btn-fantasma:hover{background:rgba(255,255,255,.12);box-shadow:none}
+.btn.exito{background:linear-gradient(135deg,#27ae60,var(--verde));animation:pulso .5s ease}
+
+/* =========================================================================
+   5. NAVBAR Y LAYOUT DE LA APLICACIÓN
+   ========================================================================= */
+.app{min-height:100vh;display:flex;flex-direction:column;animation:fundido .4s ease}
+.navbar{
+  position:sticky;top:0;z-index:50;
+  background:linear-gradient(90deg,var(--azul-900),var(--azul-800));
+  box-shadow:0 2px 10px rgba(11,37,69,.25);
+  color:#fff;
+}
+.navbar-interior{
+  max-width:1120px;margin:0 auto;
+  padding:0 20px;
+  display:flex;align-items:center;gap:18px;
+  min-height:68px;
+}
+.marca{display:flex;align-items:center;gap:12px;min-width:max-content}
+.marca-icono{
+  width:40px;height:40px;border-radius:12px;display:grid;place-items:center;
+  background:rgba(255,255,255,.14);font-size:18px;
+}
+.marca-texto{display:flex;flex-direction:column;line-height:1.2}
+.marca-texto strong{font-size:1rem;font-weight:700}
+.marca-texto span{font-size:.74rem;color:rgba(255,255,255,.7)}
+
+.menu{
+  display:flex;gap:4px;margin-left:auto;
+  height:100%;
+}
+.menu-enlace{
+  position:relative;
+  display:inline-flex;align-items:center;gap:8px;
+  padding:0 14px;height:68px;
+  background:none;border:0;color:rgba(255,255,255,.72);
+  font-weight:500;font-size:.92rem;
+  transition:var(--transicion);
+}
+.menu-enlace:hover{color:#fff}
+.menu-enlace::after{
+  content:"";position:absolute;left:12px;right:12px;bottom:0;height:3px;border-radius:3px 3px 0 0;
+  background:#8fc1ff;transform:scaleX(0);transition:transform .3s ease;
+}
+.menu-enlace.activo{color:#fff}
+.menu-enlace.activo::after{transform:scaleX(1)}
+
+.usuario{display:flex;align-items:center;gap:10px;margin-left:10px;padding-left:18px;border-left:1px solid rgba(255,255,255,.18)}
+.avatar{
+  width:36px;height:36px;border-radius:50%;display:grid;place-items:center;
+  background:linear-gradient(135deg,#5aa0ea,#2e6fbf);font-weight:700;font-size:.8rem;
+  box-shadow:0 0 0 2px rgba(255,255,255,.2);
+}
+.usuario-datos{display:flex;flex-direction:column;line-height:1.2}
+.usuario-datos strong{font-size:.88rem;font-weight:600}
+.insignia-rol{
+  font-size:.7rem;font-weight:600;text-transform:uppercase;letter-spacing:.05em;
+  padding:2px 8px;border-radius:999px;background:rgba(255,255,255,.14);color:#dbe9ff;width:max-content;
+}
+.btn-salir{
+  background:rgba(255,255,255,.08);color:#fff;border:1px solid rgba(255,255,255,.22);
+  padding:8px 12px;border-radius:8px;font-size:.85rem;font-weight:500;
+  transition:var(--transicion);
+}
+.btn-salir:hover{background:rgba(192,57,43,.85);border-color:transparent}
+
+.contenedor{
+  width:100%;max-width:1120px;margin:0 auto;padding:28px 20px 48px;flex:1;
+}
+.pagina{display:none}
+.pagina.activa{display:block;animation:subir .4s cubic-bezier(.4,0,.2,1) both}
+
+.encabezado-pagina{margin-bottom:22px}
+.encabezado-pagina h2{font-size:1.5rem;display:flex;align-items:center;gap:10px}
+.encabezado-pagina h2 i{color:var(--azul-500);font-size:1.3rem;width:1.3em;text-align:center}
+.encabezado-pagina p{color:var(--gris-600);margin-top:4px;font-size:.95rem}
+
+/* =========================================================================
+   6. TARJETAS Y LAYOUT
+   ========================================================================= */
+.tarjeta{
+  background:var(--blanco);
+  border:1px solid var(--gris-200);
+  border-radius:var(--radio);
+  box-shadow:var(--sombra);
+  padding:26px;
+  transition:var(--transicion);
+}
+.tarjeta-cabecera{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:18px}
+.tarjeta-cabecera h3{font-size:1.05rem;display:flex;align-items:center;gap:8px}
+.tarjeta-cabecera h3 i{color:var(--azul-500);width:1.2em;text-align:center}
+
+.grid-2{display:grid;grid-template-columns:1.25fr .75fr;gap:22px;align-items:start}
+.fila-campos{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.fila-campos>*,.grid-2>*{min-width:0}
+.caja-aviso{
+  display:flex;gap:10px;align-items:flex-start;
+  padding:12px 14px;border-radius:var(--radio-sm);
+  background:var(--azul-100);color:var(--azul-800);font-size:.86rem;
+}
+.caja-aviso i{margin-top:2px;color:var(--azul-500)}
+
+.pasos{display:flex;flex-direction:column;gap:14px;counter-reset:paso}
+.paso{display:flex;gap:12px;align-items:flex-start}
+.paso-num{
+  flex:0 0 28px;height:28px;border-radius:50%;display:grid;place-items:center;
+  background:var(--azul-100);color:var(--azul-700);font-weight:700;font-size:.82rem;
+}
+.paso p{font-size:.9rem;color:var(--gris-600)}
+.paso strong{color:var(--gris-900);display:block;font-size:.92rem}
+
+/* =========================================================================
+   7. ESTADÍSTICAS
+   ========================================================================= */
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:22px}
+.stat{
+  display:flex;align-items:center;gap:14px;
+  padding:18px;background:var(--blanco);border:1px solid var(--gris-200);
+  border-radius:var(--radio);box-shadow:var(--sombra);
+}
+.stat-icono{
+  width:46px;height:46px;border-radius:12px;display:grid;place-items:center;font-size:18px;flex:0 0 46px;
+}
+.stat-icono.azul{background:var(--azul-100);color:var(--azul-700)}
+.stat-icono.naranja{background:var(--naranja-suave);color:var(--naranja)}
+.stat-icono.verde{background:var(--verde-suave);color:var(--verde)}
+.stat b{display:block;font-size:1.6rem;line-height:1.1;color:var(--azul-900)}
+.stat span{font-size:.85rem;color:var(--gris-600)}
+
+/* =========================================================================
+   8. MAPA SIMULADO
+   ========================================================================= */
+.mapa{
+  position:relative;height:420px;border-radius:var(--radio);overflow:hidden;
+  background:
+    linear-gradient(#ffffffb3 1px,transparent 1px) 0 0/44px 44px,
+    linear-gradient(90deg,#ffffffb3 1px,transparent 1px) 0 0/44px 44px,
+    linear-gradient(160deg,#eef2f6,#dfe6ee);
+  border:1px solid var(--gris-200);
+  box-shadow:inset 0 0 40px rgba(11,37,69,.04);
+}
+.mapa-vias{
+  position:absolute;inset:0;pointer-events:none;opacity:.6;
+  background:
+    linear-gradient(115deg,transparent 46%,#ffffffcc 47%,#ffffffcc 53%,transparent 54%) 0 0/100% 100%,
+    linear-gradient(20deg,transparent 60%,#ffffffb0 61%,#ffffffb0 64%,transparent 65%) 0 0/100% 100%;
+}
+.mapa-leyenda{
+  position:absolute;left:14px;bottom:14px;z-index:2;
+  display:flex;gap:8px;flex-wrap:wrap;
+  background:rgba(255,255,255,.92);backdrop-filter:blur(4px);
+  padding:8px 12px;border-radius:999px;box-shadow:var(--sombra);
+  font-size:.78rem;color:var(--gris-600);
+}
+.mapa-leyenda span{display:inline-flex;align-items:center;gap:6px}
+.punto{width:10px;height:10px;border-radius:50%}
+.punto.naranja{background:var(--naranja)}
+.punto.verde{background:var(--verde)}
+.mapa-etiqueta{
+  position:absolute;right:14px;top:14px;z-index:2;
+  background:rgba(11,37,69,.85);color:#fff;font-size:.74rem;
+  padding:6px 10px;border-radius:8px;
+}
+
+.pin{
+  position:absolute;z-index:1;
+  width:34px;height:34px;margin:-34px 0 0 -17px;
+  border:0;padding:0;border-radius:50% 50% 50% 0;
+  transform:rotate(-45deg);
+  display:grid;place-items:center;
+  box-shadow:0 4px 10px rgba(11,37,69,.3);
+  transition:transform .2s ease;
+  animation:caer .45s cubic-bezier(.3,1.4,.6,1) both;
+}
+.pin i{transform:rotate(45deg);color:#fff;font-size:14px}
+.pin:hover{transform:rotate(-45deg) scale(1.15);z-index:3}
+.pin.pendiente{background:var(--naranja)}
+.pin.verificado{background:var(--verde)}
+
+/* =========================================================================
+   9. FORMULARIO DE REPORTE
+   ========================================================================= */
+.tipo-opciones{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.tipo-opcion input{position:absolute;opacity:0;pointer-events:none}
+.tipo-opcion label{
+  display:flex;flex-direction:column;align-items:center;gap:8px;
+  padding:16px 10px;border:1.5px solid var(--gris-200);border-radius:var(--radio-sm);
+  background:#fff;cursor:pointer;text-align:center;
+  font-size:.88rem;font-weight:600;color:var(--gris-600);
+  transition:var(--transicion);
+}
+.tipo-opcion label i{font-size:20px;color:var(--gris-400);transition:var(--transicion)}
+.tipo-opcion label:hover{border-color:var(--azul-500);transform:translateY(-1px)}
+.tipo-opcion input:checked + label{
+  border-color:var(--azul-500);background:var(--azul-100);color:var(--azul-800);
+  box-shadow:0 0 0 4px rgba(46,111,191,.14);
+}
+.tipo-opcion input:checked + label i{color:var(--azul-500)}
+.tipo-opcion input:focus-visible + label{outline:3px solid rgba(46,111,191,.4);outline-offset:2px}
+
+.ubicacion{display:flex;gap:10px;align-items:stretch}
+.ubicacion .entrada{flex:1;min-width:0}
+.ubicacion .btn{flex:0 0 auto}
+.ubicacion .entrada i.icono{left:14px}
+.contador{font-size:.78rem;color:var(--gris-400);text-align:right;margin-top:4px}
+
+/* =========================================================================
+   10. LISTA DE ALERTAS (tarjetas de notificación)
+   ========================================================================= */
+.filtros{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px}
+.filtros .entrada{flex:1 1 200px;min-width:180px}
+.filtros select{padding-left:42px;cursor:pointer}
+.filtros .entrada i.icono{left:14px}
+
+.lista-alertas{display:grid;gap:14px}
+.alerta{
+  position:relative;
+  background:var(--blanco);border:1px solid var(--gris-200);border-radius:var(--radio);
+  box-shadow:var(--sombra);padding:18px 20px 18px 24px;overflow:hidden;
+  transition:var(--transicion);
+  animation:subir .35s ease both;
+}
+.alerta:hover{transform:translateY(-2px);box-shadow:0 10px 24px rgba(11,37,69,.12)}
+.alerta::before{
+  content:"";position:absolute;left:0;top:0;bottom:0;width:5px;
+  background:var(--naranja);
+}
+.alerta.verificado::before{background:var(--verde)}
+.alerta.pendiente::before{background:var(--naranja)}
+.alerta.eliminado::before{background:var(--gris-400)}
+.alerta.eliminado{opacity:.75}
+
+.alerta-cabecera{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:8px}
+.chip-tipo{
+  display:inline-flex;align-items:center;gap:7px;
+  padding:5px 11px;border-radius:999px;font-size:.8rem;font-weight:600;
+  background:var(--azul-100);color:var(--azul-700);
+}
+.chip-tipo.Robo{background:#fdecea;color:#b03a2e}
+.chip-tipo.Ruido{background:#fef5e7;color:#a86212}
+.chip-tipo.Sospechoso{background:#eef0fb;color:#3d4fa0}
+
+.estado{
+  display:inline-flex;align-items:center;gap:6px;
+  font-size:.74rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;
+  padding:4px 10px;border-radius:999px;
+}
+.estado::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor}
+.estado.pendiente{background:var(--naranja-suave);color:#b35b0c}
+.estado.verificado{background:var(--verde-suave);color:var(--verde)}
+.estado.eliminado{background:var(--gris-100);color:var(--gris-600)}
+
+.alerta h4{font-size:1rem;color:var(--azul-900);margin-bottom:4px}
+.alerta p{color:var(--gris-600);font-size:.92rem}
+.alerta-meta{display:flex;gap:16px;flex-wrap:wrap;margin-top:12px;font-size:.8rem;color:var(--gris-400)}
+.alerta-meta span{display:inline-flex;align-items:center;gap:6px}
+.alerta-acciones{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;padding-top:14px;border-top:1px dashed var(--gris-200)}
+
+.vacio{
+  text-align:center;padding:40px 20px;color:var(--gris-600);
+  border:1.5px dashed var(--gris-200);border-radius:var(--radio);background:var(--blanco);
+}
+.vacio i{font-size:34px;color:var(--gris-400);margin-bottom:10px}
+.vacio p{margin-top:4px}
+
+/* =========================================================================
+   11. TOASTS (notificaciones flotantes)
+   ========================================================================= */
+.toasts{
+  position:fixed;top:84px;right:20px;z-index:200;
+  display:flex;flex-direction:column;gap:10px;
+  width:min(380px,calc(100vw - 40px));
+  pointer-events:none;
+}
+.toast{
+  pointer-events:auto;
+  display:flex;align-items:flex-start;gap:12px;
+  background:#fff;border-radius:12px;padding:14px 14px 14px 16px;
+  box-shadow:var(--sombra-alta);border-left:5px solid var(--azul-500);
+  animation:entrarToast .35s cubic-bezier(.2,.9,.3,1.2) both;
+  transition:opacity .3s ease, transform .3s ease;
+}
+.toast.salida{opacity:0;transform:translateX(30px)}
+.toast>i:first-child{font-size:20px;margin-top:1px}
+.toast div{flex:1;display:flex;flex-direction:column;gap:2px}
+.toast strong{font-size:.92rem;color:var(--gris-900)}
+.toast span{font-size:.84rem;color:var(--gris-600)}
+.toast button{background:none;border:0;color:var(--gris-400);padding:2px;font-size:14px}
+.toast button:hover{color:var(--gris-900)}
+.toast.success{border-left-color:var(--verde)}
+.toast.success>i:first-child{color:var(--verde)}
+.toast.warning{border-left-color:var(--naranja)}
+.toast.warning>i:first-child{color:var(--naranja)}
+.toast.error{border-left-color:var(--rojo)}
+.toast.error>i:first-child{color:var(--rojo)}
+.toast.info{border-left-color:var(--azul-500)}
+.toast.info>i:first-child{color:var(--azul-500)}
+
+/* =========================================================================
+   12. MODAL DE CONFIRMACIÓN
+   ========================================================================= */
+.modal{
+  position:fixed;inset:0;z-index:300;
+  display:flex;align-items:center;justify-content:center;padding:20px;
+  background:rgba(11,37,69,.5);backdrop-filter:blur(3px);
+  animation:fundido .2s ease;
+}
+.modal-caja{
+  width:100%;max-width:400px;background:#fff;border-radius:18px;
+  padding:28px;box-shadow:var(--sombra-alta);text-align:center;
+  animation:subir .3s cubic-bezier(.2,.9,.3,1.1) both;
+}
+.modal-icono{
+  width:58px;height:58px;margin:0 auto 14px;border-radius:50%;
+  display:grid;place-items:center;font-size:22px;
+  background:var(--naranja-suave);color:var(--naranja);
+}
+.modal-icono.peligro{background:var(--rojo-suave);color:var(--rojo)}
+.modal-caja h3{font-size:1.15rem;margin-bottom:6px}
+.modal-caja p{color:var(--gris-600);font-size:.92rem}
+.modal-acciones{display:flex;gap:10px;margin-top:22px}
+.modal-acciones .btn{flex:1}
+
+/* =========================================================================
+   13. ANIMACIONES
+   ========================================================================= */
+@keyframes subir{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+@keyframes fundido{from{opacity:0}to{opacity:1}}
+@keyframes caer{from{opacity:0;transform:rotate(-45deg) translateY(-14px)}to{opacity:1;transform:rotate(-45deg)}}
+@keyframes temblar{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+@keyframes pulso{0%{transform:scale(1)}50%{transform:scale(1.04)}100%{transform:scale(1)}}
+@keyframes entrarToast{from{opacity:0;transform:translateX(40px)}to{opacity:1;transform:none}}
+@keyframes girar{to{transform:rotate(360deg)}}
+.cargando{animation:girar .8s linear infinite}
+
+/* =========================================================================
+   14. RESPONSIVE
+   ========================================================================= */
+@media (max-width:920px){
+  .grid-2{grid-template-columns:1fr}
+  .stats{grid-template-columns:1fr}
+}
+@media (max-width:760px){
+  .navbar-interior{flex-wrap:wrap;padding:10px 16px 0;gap:10px}
+  .marca{flex:1}
+  .usuario{margin-left:0;padding-left:0;border-left:0}
+  .usuario-datos{display:none}
+  .menu{
+    order:3;width:100%;margin-left:0;
+    overflow-x:auto;scrollbar-width:none;
+  }
+  .menu::-webkit-scrollbar{display:none}
+  .menu-enlace{height:48px;flex:1 0 auto;justify-content:center}
+  .contenedor{padding:20px 14px 40px}
+  .fila-campos{grid-template-columns:1fr}
+  .tipo-opciones{grid-template-columns:1fr}
+  .tipo-opcion label{flex-direction:row;justify-content:flex-start;padding:14px 16px}
+  .mapa{height:340px}
+  .toasts{top:auto;bottom:16px;right:50%;transform:translateX(50%);width:calc(100vw - 28px)}
+  .tarjeta{padding:20px}
+  .encabezado-pagina h2{font-size:1.25rem}
+  .login-cuerpo{padding:24px 22px 26px}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none !important;transition:none !important}
+}
+</style>
+</head>
+<body>
+
+<!-- =========================================================================
+     PANTALLA DE LOGIN
+     ========================================================================= -->
+<div id="pantallaLogin" class="login-screen">
+  <div class="login-card">
+    <div class="login-cabecera">
+      <div class="login-logo"><i class="fa-solid fa-tower-broadcast"></i></div>
+      <h1>Red Vecinal Digital</h1>
+      <p>Prevención comunitaria del delito · Ibagué, Tolima</p>
+    </div>
+
+    <div class="login-cuerpo">
+      <div class="credenciales">
+        <div class="credenciales-titulo"><i class="fa-solid fa-key"></i> Credenciales de prueba</div>
+        <button type="button" class="credencial" data-usuario="vecino" data-clave="1234">
+          <span>
+            <span class="rol">Ciudadano</span>
+            <small>Acceso a Reportar y Mapa</small>
+          </span>
+          <span><code>vecino / 1234</code> <i class="fa-solid fa-arrow-right-to-bracket"></i></span>
+        </button>
+        <button type="button" class="credencial" data-usuario="admin" data-clave="admin">
+          <span>
+            <span class="rol">Administrador</span>
+            <small>Acceso completo, incluido el panel</small>
+          </span>
+          <span><code>admin / admin</code> <i class="fa-solid fa-arrow-right-to-bracket"></i></span>
+        </button>
+      </div>
+
+      <form id="formLogin" novalidate>
+        <div id="errorLogin" class="error-login" hidden>
+          <i class="fa-solid fa-circle-exclamation"></i>
+          <span>Usuario o contraseña incorrectos.</span>
+        </div>
+
+        <div class="campo">
+          <label for="loginUsuario">Usuario</label>
+          <div class="entrada">
+            <i class="fa-solid fa-user icono"></i>
+            <input id="loginUsuario" autocomplete="username" placeholder="Ej.: vecino" required>
+          </div>
+        </div>
+
+        <div class="campo">
+          <label for="loginPassword">Contraseña</label>
+          <div class="entrada">
+            <i class="fa-solid fa-lock icono"></i>
+            <input id="loginPassword" type="password" autocomplete="current-password" placeholder="Ingrese su contraseña" required>
+          </div>
+        </div>
+
+        <button class="btn btn-bloque" type="submit">
+          <i class="fa-solid fa-right-to-bracket"></i> Iniciar sesión
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- =========================================================================
+     APLICACIÓN (visible después del login)
+     ========================================================================= -->
+<div id="aplicacion" class="app" hidden>
+
+  <!-- Navbar -->
+  <header class="navbar">
+    <div class="navbar-interior">
+      <div class="marca">
+        <div class="marca-icono"><i class="fa-solid fa-tower-broadcast"></i></div>
+        <div class="marca-texto">
+          <strong>Red Vecinal Digital</strong>
+          <span>Ibagué, Tolima</span>
+        </div>
+      </div>
+
+      <nav class="menu" aria-label="Navegación principal">
+        <button class="menu-enlace activo" data-tab="reportar"><i class="fa-solid fa-circle-plus"></i> Reportar</button>
+        <button class="menu-enlace" data-tab="alertas"><i class="fa-solid fa-map-location-dot"></i> Mapa y alertas</button>
+        <button class="menu-enlace" data-tab="admin" id="enlaceAdmin"><i class="fa-solid fa-shield-halved"></i> Administración</button>
+      </nav>
+
+      <div class="usuario">
+        <div class="avatar" id="avatarUsuario">--</div>
+        <div class="usuario-datos">
+          <strong id="nombreUsuario">--</strong>
+          <span class="insignia-rol" id="rolUsuario">--</span>
+        </div>
+        <button class="btn-salir" id="btnSalir" title="Cerrar sesión">
+          <i class="fa-solid fa-right-from-bracket"></i> Salir
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="contenedor">
+
+    <!-- PÁGINA 1: REPORTAR INCIDENTE -->
+    <section id="reportar" class="pagina activa">
+      <div class="encabezado-pagina">
+        <h2><i class="fa-solid fa-circle-plus"></i> Reportar un incidente</h2>
+        <p>Comparta lo que observó en su barrio. El reporte se guarda sin datos personales.</p>
+      </div>
+
+      <div class="grid-2">
+        <div class="tarjeta">
+          <form id="formReporte" autocomplete="off">
+            <div class="campo">
+              <label>Tipo de incidente</label>
+              <div class="tipo-opciones" role="radiogroup" aria-label="Tipo de incidente">
+                <div class="tipo-opcion">
+                  <input type="radio" id="tipoRobo" name="tipo" value="Robo" required>
+                  <label for="tipoRobo"><i class="fa-solid fa-hand-holding-dollar"></i> Robo</label>
+                </div>
+                <div class="tipo-opcion">
+                  <input type="radio" id="tipoRuido" name="tipo" value="Ruido">
+                  <label for="tipoRuido"><i class="fa-solid fa-volume-high"></i> Ruido</label>
+                </div>
+                <div class="tipo-opcion">
+                  <input type="radio" id="tipoSospechoso" name="tipo" value="Sospechoso">
+                  <label for="tipoSospechoso"><i class="fa-solid fa-user-secret"></i> Sospechoso</label>
+                </div>
+              </div>
+            </div>
+
+            <div class="campo">
+              <label for="descripcion">Descripción</label>
+              <textarea id="descripcion" maxlength="500" placeholder="Describa qué ocurrió, la hora aproximada y las características relevantes (sin nombres ni placas)." required></textarea>
+              <div class="contador"><span id="contadorDescripcion">0</span> / 500</div>
+            </div>
+
+            <div class="fila-campos">
+              <div class="campo">
+                <label for="barrio">Barrio o sector</label>
+                <div class="entrada">
+                  <i class="fa-solid fa-house-chimney icono"></i>
+                  <input id="barrio" maxlength="60" placeholder="Ej.: Barrio Techitos" required>
+                </div>
+              </div>
+              <div class="campo">
+                <label for="coords">Ubicación aproximada</label>
+                <div class="ubicacion">
+                  <div class="entrada">
+                    <i class="fa-solid fa-location-crosshairs icono"></i>
+                    <input id="coords" placeholder="Pulse «Obtener ubicación»" readonly>
+                  </div>
+                  <button type="button" class="btn btn-sec btn-pequeno" id="btnUbicar">
+                    <i class="fa-solid fa-location-dot"></i> Obtener
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <button class="btn btn-bloque" type="submit" id="btnEnviar">
+              <i class="fa-solid fa-paper-plane"></i> Enviar reporte
+            </button>
+          </form>
+        </div>
+
+        <aside class="tarjeta">
+          <div class="tarjeta-cabecera">
+            <h3><i class="fa-solid fa-circle-info"></i> Antes de enviar</h3>
+          </div>
+          <div class="pasos">
+            <div class="paso">
+              <div class="paso-num">1</div>
+              <div><strong>Elija el tipo</strong><p>Robo, ruido o comportamiento sospechoso.</p></div>
+            </div>
+            <div class="paso">
+              <div class="paso-num">2</div>
+              <div><strong>Describa lo ocurrido</strong><p>Hechos concretos, sin señalar a personas.</p></div>
+            </div>
+            <div class="paso">
+              <div class="paso-num">3</div>
+              <div><strong>Indique la zona</strong><p>Obtenga la ubicación aproximada del sector.</p></div>
+            </div>
+          </div>
+          <div class="caja-aviso" style="margin-top:20px">
+            <i class="fa-solid fa-shield-halved"></i>
+            <span>Este reporte es comunitario y no reemplaza la denuncia formal ante la autoridad.</span>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <!-- PÁGINA 2: MAPA Y ALERTAS -->
+    <section id="alertas" class="pagina">
+      <div class="encabezado-pagina">
+        <h2><i class="fa-solid fa-map-location-dot"></i> Mapa y alertas</h2>
+        <p>Incidentes reportados por la comunidad, con su estado de revisión.</p>
+      </div>
+
+      <div class="stats">
+        <div class="stat">
+          <div class="stat-icono azul"><i class="fa-solid fa-layer-group"></i></div>
+          <div><b id="stTotal">0</b><span>Reportes activos</span></div>
+        </div>
+        <div class="stat">
+          <div class="stat-icono naranja"><i class="fa-solid fa-clock"></i></div>
+          <div><b id="stPend">0</b><span>Pendientes de revisión</span></div>
+        </div>
+        <div class="stat">
+          <div class="stat-icono verde"><i class="fa-solid fa-circle-check"></i></div>
+          <div><b id="stVerif">0</b><span>Verificados</span></div>
+        </div>
+      </div>
+
+      <div class="tarjeta" style="margin-bottom:22px;padding:14px">
+        <div class="mapa" id="mapa">
+          <div class="mapa-vias"></div>
+          <span class="mapa-etiqueta"><i class="fa-solid fa-map"></i> Mapa referencial · Ibagué</span>
+          <div class="mapa-leyenda">
+            <span><i class="punto naranja"></i> Pendiente</span>
+            <span><i class="punto verde"></i> Verificado</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="filtros">
+        <div class="entrada">
+          <i class="fa-solid fa-filter icono"></i>
+          <select id="filtroTipo" aria-label="Filtrar por tipo">
+            <option value="">Todos los tipos</option>
+            <option value="Robo">Robo</option>
+            <option value="Ruido">Ruido</option>
+            <option value="Sospechoso">Sospechoso</option>
+          </select>
+        </div>
+        <div class="entrada">
+          <i class="fa-solid fa-list-check icono"></i>
+          <select id="filtroEstado" aria-label="Filtrar por estado">
+            <option value="">Todos los estados</option>
+            <option value="pendiente">Pendiente</option>
+            <option value="verificado">Verificado</option>
+          </select>
+        </div>
+      </div>
+
+      <div id="listaAlertas" class="lista-alertas"></div>
+    </section>
+
+    <!-- PÁGINA 3: ADMINISTRACIÓN (solo rol admin) -->
+    <section id="admin" class="pagina">
+      <div class="encabezado-pagina">
+        <h2><i class="fa-solid fa-shield-halved"></i> Panel de administración</h2>
+        <p>Verifique reportes o retírelos de la lista pública. Las eliminaciones son lógicas y se pueden restaurar.</p>
+      </div>
+
+      <div class="filtros" style="align-items:center">
+        <div class="entrada" style="flex:0 1 260px">
+          <i class="fa-solid fa-filter icono"></i>
+          <select id="admFiltro" aria-label="Filtrar por estado">
+            <option value="">Todos los estados</option>
+            <option value="pendiente">Pendientes</option>
+            <option value="verificado">Verificados</option>
+            <option value="eliminado">Eliminados</option>
+          </select>
+        </div>
+        <div style="margin-left:auto;display:flex;gap:10px;flex-wrap:wrap">
+          <button class="btn btn-sec" id="btnDemo"><i class="fa-solid fa-flask"></i> Cargar datos de prueba</button>
+          <button class="btn btn-sec" id="btnBorrar" style="color:var(--rojo)"><i class="fa-solid fa-trash-can"></i> Borrar todo</button>
+        </div>
+      </div>
+
+      <div id="listaAdmin" class="lista-alertas"></div>
+    </section>
+
+  </main>
+</div>
+
+<!-- Contenedores de notificaciones y modal -->
+<div id="toasts" class="toasts" aria-live="polite"></div>
+
+<div id="modal" class="modal" hidden role="dialog" aria-modal="true" aria-labelledby="modalTitulo">
+  <div class="modal-caja">
+    <div class="modal-icono" id="modalIcono"><i class="fa-solid fa-triangle-exclamation"></i></div>
+    <h3 id="modalTitulo"></h3>
+    <p id="modalTexto"></p>
+    <div class="modal-acciones">
+      <button class="btn btn-sec" id="modalNo">Cancelar</button>
+      <button class="btn" id="modalSi">Confirmar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  /* =======================================================================
+     0. CONFIGURACIÓN Y UTILIDADES
+     ======================================================================= */
+  const CLAVE_DB = "redVecinal_reportes";   // Simula la base de datos georreferenciada
+  const CLAVE_SESION = "redVecinal_sesion"; // Sesión activa (sessionStorage)
+  const CENTRO = { lat: 4.4389, lng: -75.2322 }; // Referencia aproximada de Ibagué
+  const RADIO = 0.03;                             // Dispersión de coordenadas simuladas (grados)
+
+  // Usuarios de prueba (validación en cliente; solo para el prototipo)
+  const USUARIOS = {
+    vecino: { password: "1234",  rol: "ciudadano",     etiqueta: "Ciudadano",     iniciales: "VE" },
+    admin:  { password: "admin", rol: "administrador", etiqueta: "Administrador", iniciales: "AD" }
+  };
+
+  const ICONO_TIPO = {
+    Robo: "fa-hand-holding-dollar",
+    Ruido: "fa-volume-high",
+    Sospechoso: "fa-user-secret"
+  };
+
+  const $ = (id) => document.getElementById(id);
+  const $$ = (sel) => document.querySelectorAll(sel);
+
+  function esc(texto) {
+    const d = document.createElement("div");
+    d.textContent = String(texto);
+    return d.innerHTML;
+  }
+  function fecha(iso) {
+    return new Date(iso).toLocaleString("es-CO", { dateStyle: "medium", timeStyle: "short" });
+  }
+  function coordenadaAleatoria() {
+    return {
+      lat: +(CENTRO.lat + (Math.random() * 2 - 1) * RADIO).toFixed(5),
+      lng: +(CENTRO.lng + (Math.random() * 2 - 1) * RADIO).toFixed(5)
+    };
+  }
+  function ordenarRecientes(lista) {
+    return lista.slice().sort((a, b) => b.creado.localeCompare(a.creado));
+  }
+  function capitalizar(t) {
+    return t.charAt(0).toUpperCase() + t.slice(1);
+  }
+
+  /* =======================================================================
+     1. CAPA DE PERSISTENCIA (localStorage)
+     ======================================================================= */
+  function cargar() {
+    try { return JSON.parse(localStorage.getItem(CLAVE_DB)) || []; }
+    catch (e) { return []; }
+  }
+  function guardar(lista) {
+    localStorage.setItem(CLAVE_DB, JSON.stringify(lista));
+  }
+
+  /* =======================================================================
+     2. NOTIFICACIONES (toasts) Y MODAL DE CONFIRMACIÓN
+     ======================================================================= */
+  const ICONOS_TOAST = {
+    success: "fa-circle-check",
+    warning: "fa-triangle-exclamation",
+    error: "fa-circle-xmark",
+    info: "fa-circle-info"
+  };
+
+  function toast(tipo, titulo, mensaje = "", duracion = 3800) {
+    const el = document.createElement("div");
+    el.className = "toast " + tipo;
+    el.setAttribute("role", "status");
+    el.innerHTML =
+      `<i class="fa-solid ${ICONOS_TOAST[tipo]}"></i>
+       <div><strong>${esc(titulo)}</strong>${mensaje ? `<span>${esc(mensaje)}</span>` : ""}</div>
+       <button type="button" aria-label="Cerrar notificación"><i class="fa-solid fa-xmark"></i></button>`;
+    const cerrar = () => {
+      el.classList.add("salida");
+      setTimeout(() => el.remove(), 320);
+    };
+    el.querySelector("button").addEventListener("click", cerrar);
+    $("toasts").appendChild(el);
+    setTimeout(cerrar, duracion);
+  }
+
+  // Devuelve una promesa que se resuelve en true (confirmar) o false (cancelar)
+  function confirmar({ titulo, texto, peligro = false, textoBoton = "Confirmar" }) {
+    return new Promise((resolver) => {
+      const modal = $("modal");
+      const icono = $("modalIcono");
+      icono.className = "modal-icono" + (peligro ? " peligro" : "");
+      icono.innerHTML = `<i class="fa-solid ${peligro ? "fa-trash-can" : "fa-triangle-exclamation"}"></i>`;
+      $("modalTitulo").textContent = titulo;
+      $("modalTexto").textContent = texto;
+
+      const si = $("modalSi");
+      si.textContent = textoBoton;
+      si.className = "btn" + (peligro ? " btn-peligro" : "");
+
+      const cerrar = (valor) => {
+        modal.hidden = true;
+        si.onclick = null;
+        $("modalNo").onclick = null;
+        modal.onclick = null;
+        document.removeEventListener("keydown", tecla);
+        resolver(valor);
+      };
+      const tecla = (e) => { if (e.key === "Escape") cerrar(false); };
+
+      si.onclick = () => cerrar(true);
+      $("modalNo").onclick = () => cerrar(false);
+      modal.onclick = (e) => { if (e.target === modal) cerrar(false); };
+      document.addEventListener("keydown", tecla);
+
+      modal.hidden = false;
+      si.focus();
+    });
+  }
+
+  /* =======================================================================
+     3. AUTENTICACIÓN Y SESIÓN
+     ======================================================================= */
+  function sesionActual() {
+    try { return JSON.parse(sessionStorage.getItem(CLAVE_SESION)); }
+    catch (e) { return null; }
+  }
+  function esAdmin() {
+    const s = sesionActual();
+    return !!s && USUARIOS[s.usuario] && USUARIOS[s.usuario].rol === "administrador";
+  }
+
+  function iniciarSesion(usuario, clave) {
+    const cuenta = USUARIOS[usuario];
+    if (!cuenta || cuenta.password !== clave) return false;
+    sessionStorage.setItem(CLAVE_SESION, JSON.stringify({ usuario }));
+    return true;
+  }
+
+  function cerrarSesion() {
+    sessionStorage.removeItem(CLAVE_SESION);
+    $("aplicacion").hidden = true;
+    $("pantallaLogin").hidden = false;
+    $("formLogin").reset();
+    $("errorLogin").hidden = true;
+    toast("info", "Sesión cerrada", "Hasta pronto.");
+  }
+
+  function mostrarApp() {
+    const s = sesionActual();
+    const cuenta = USUARIOS[s.usuario];
+
+    $("pantallaLogin").hidden = true;
+    $("aplicacion").hidden = false;
+
+    $("avatarUsuario").textContent = cuenta.iniciales;
+    $("nombreUsuario").textContent = capitalizar(s.usuario);
+    $("rolUsuario").textContent = cuenta.etiqueta;
+
+    // Ocultar la pestaña de administración para el rol ciudadano
+    $("enlaceAdmin").hidden = !esAdmin();
+
+    mostrarPagina("reportar");
+    renderTodo();
+  }
+
+  /* =======================================================================
+     4. NAVEGACIÓN ENTRE PESTAÑAS
+     ======================================================================= */
+  function mostrarPagina(id) {
+    if (id === "admin" && !esAdmin()) {
+      toast("warning", "Acceso restringido", "El panel de administración es solo para administradores.");
+      return;
+    }
+    $$(".menu-enlace").forEach((b) => b.classList.toggle("activo", b.dataset.tab === id));
+    $$(".pagina").forEach((p) => p.classList.remove("activa"));
+    // Reinicia la animación de entrada de la página
+    const pagina = $(id);
+    void pagina.offsetWidth;
+    pagina.classList.add("activa");
+    if (id === "alertas") renderAlertas();
+    if (id === "admin") renderAdmin();
+  }
+
+  $$(".menu-enlace").forEach((boton) => {
+    boton.addEventListener("click", () => mostrarPagina(boton.dataset.tab));
+  });
+
+  /* =======================================================================
+     5. LOGIN: eventos
+     ======================================================================= */
+  // Rellenar credenciales de prueba con un clic
+  $$(".credencial").forEach((boton) => {
+    boton.addEventListener("click", () => {
+      $("loginUsuario").value = boton.dataset.usuario;
+      $("loginPassword").value = boton.dataset.clave;
+      $("errorLogin").hidden = true;
+      $("loginPassword").focus();
+    });
+  });
+
+  $("formLogin").addEventListener("submit", (e) => {
+    e.preventDefault();
+    const usuario = $("loginUsuario").value.trim().toLowerCase();
+    const clave = $("loginPassword").value;
+
+    if (!iniciarSesion(usuario, clave)) {
+      $("errorLogin").hidden = false;
+      // Efecto de sacudida para el formulario
+      const card = document.querySelector(".login-card");
+      card.style.animation = "none";
+      void card.offsetWidth;
+      card.style.animation = "temblar .4s ease";
+      return;
+    }
+    $("errorLogin").hidden = true;
+    mostrarApp();
+    toast("success", "Bienvenido, " + capitalizar(usuario), "Sesión iniciada correctamente.");
+  });
+
+  $("btnSalir").addEventListener("click", async () => {
+    const ok = await confirmar({
+      titulo: "¿Cerrar sesión?",
+      texto: "Saldrá de la aplicación. Sus reportes ya enviados permanecen guardados.",
+      textoBoton: "Cerrar sesión"
+    });
+    if (ok) cerrarSesion();
+  });
+
+  /* =======================================================================
+     6. PANTALLA 1: REPORTAR INCIDENTE
+     ======================================================================= */
+  let coordsActuales = null;
+
+  $("btnUbicar").addEventListener("click", () => {
+    const boton = $("btnUbicar");
+    boton.disabled = true;
+    boton.innerHTML = '<i class="fa-solid fa-spinner cargando"></i> Obteniendo';
+    // Simulación de georreferenciación con una pequeña demora
+    setTimeout(() => {
+      coordsActuales = coordenadaAleatoria();
+      $("coords").value = coordsActuales.lat.toFixed(5) + ", " + coordsActuales.lng.toFixed(5);
+      boton.disabled = false;
+      boton.innerHTML = '<i class="fa-solid fa-circle-check"></i> Listo';
+      toast("success", "Ubicación obtenida", "Coordenadas aproximadas del sector.", 2600);
+    }, 700);
+  });
+
+  $("descripcion").addEventListener("input", (e) => {
+    $("contadorDescripcion").textContent = e.target.value.length;
+  });
+
+  $("formReporte").addEventListener("submit", (e) => {
+    e.preventDefault();
+    const tipo = document.querySelector('input[name="tipo"]:checked');
+
+    if (!tipo) {
+      toast("warning", "Seleccione un tipo", "Indique si es robo, ruido o comportamiento sospechoso.");
+      return;
+    }
+    if (!coordsActuales) {
+      toast("warning", "Falta la ubicación", "Pulse «Obtener» para georreferenciar el incidente.");
+      return;
+    }
+
+    const reporte = {
+      id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
+      tipo: tipo.value,
+      descripcion: $("descripcion").value.trim(),
+      barrio: $("barrio").value.trim(),
+      lat: coordsActuales.lat,
+      lng: coordsActuales.lng,
+      estado: "pendiente",
+      creado: new Date().toISOString()
+    };
+
+    const lista = cargar();
+    lista.push(reporte);
+    guardar(lista);
+
+    // Feedback visual en el botón de envío
+    const boton = $("btnEnviar");
+    boton.classList.add("exito");
+    boton.innerHTML = '<i class="fa-solid fa-check"></i> Reporte enviado';
+    setTimeout(() => {
+      boton.classList.remove("exito");
+      boton.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Enviar reporte';
+    }, 1500);
+
+    e.target.reset();
+    coordsActuales = null;
+    $("coords").value = "";
+    $("contadorDescripcion").textContent = "0";
+
+    toast("success", "Reporte registrado", "Gracias por colaborar con la seguridad de su comunidad.");
+    renderTodo();
+  });
+
+  /* =======================================================================
+     7. PLANTILLA DE TARJETA DE ALERTA
+     ======================================================================= */
+  function tarjetaAlerta(r, conAcciones) {
+    let acciones = "";
+    if (conAcciones) {
+      const botones = [];
+      if (r.estado === "pendiente") {
+        botones.push(`<button class="btn btn-ok btn-pequeno" data-acc="verificar" data-id="${r.id}">
+                        <i class="fa-solid fa-circle-check"></i> Verificar</button>`);
+      }
+      if (r.estado !== "eliminado") {
+        botones.push(`<button class="btn btn-peligro btn-pequeno" data-acc="eliminar" data-id="${r.id}">
+                        <i class="fa-solid fa-trash-can"></i> Eliminar</button>`);
+      } else {
+        botones.push(`<button class="btn btn-sec btn-pequeno" data-acc="restaurar" data-id="${r.id}">
+                        <i class="fa-solid fa-rotate-left"></i> Restaurar</button>`);
+      }
+      acciones = `<div class="alerta-acciones">${botones.join("")}</div>`;
+    }
+
+    return `
+      <article class="alerta ${r.estado}">
+        <div class="alerta-cabecera">
+          <span class="chip-tipo ${esc(r.tipo)}"><i class="fa-solid ${ICONO_TIPO[r.tipo] || "fa-circle"}"></i> ${esc(r.tipo)}</span>
+          <span class="estado ${r.estado}">${esc(capitalizar(r.estado))}</span>
+        </div>
+        <h4>${esc(r.barrio)}</h4>
+        <p>${esc(r.descripcion)}</p>
+        <div class="alerta-meta">
+          <span><i class="fa-regular fa-clock"></i> ${fecha(r.creado)}</span>
+          <span><i class="fa-solid fa-location-dot"></i> ${r.lat.toFixed(5)}, ${r.lng.toFixed(5)}</span>
+        </div>
+        ${acciones}
+      </article>`;
+  }
+
+  /* =======================================================================
+     8. PANTALLA 2: MAPA Y LISTA DE ALERTAS
+     ======================================================================= */
+  function renderMapa(activos) {
+    const mapa = $("mapa");
+    mapa.querySelectorAll(".pin").forEach((p) => p.remove());
+
+    activos.forEach((r, i) => {
+      const x = ((r.lng - (CENTRO.lng - RADIO)) / (2 * RADIO)) * 100;
+      const y = (((CENTRO.lat + RADIO) - r.lat) / (2 * RADIO)) * 100;
+      const pin = document.createElement("button");
+      pin.type = "button";
+      pin.className = "pin " + r.estado;
+      pin.style.left = x + "%";
+      pin.style.top = y + "%";
+      pin.style.animationDelay = (i * 60) + "ms";
+      pin.title = r.tipo + " · " + r.barrio;
+      pin.setAttribute("aria-label", r.tipo + " en " + r.barrio + ", " + r.estado);
+      pin.innerHTML = `<i class="fa-solid ${ICONO_TIPO[r.tipo] || "fa-location-dot"}"></i>`;
+      mapa.appendChild(pin);
+    });
+  }
+
+  function renderAlertas() {
+    const tipo = $("filtroTipo").value;
+    const estado = $("filtroEstado").value;
+    const activos = cargar().filter((r) => r.estado !== "eliminado");
+
+    $("stTotal").textContent = activos.length;
+    $("stVerif").textContent = activos.filter((r) => r.estado === "verificado").length;
+    $("stPend").textContent = activos.filter((r) => r.estado === "pendiente").length;
+
+    renderMapa(activos);
+
+    const filtrados = ordenarRecientes(
+      activos.filter((r) => (!tipo || r.tipo === tipo) && (!estado || r.estado === estado))
+    );
+
+    $("listaAlertas").innerHTML = filtrados.length
+      ? filtrados.map((r) => tarjetaAlerta(r, false)).join("")
+      : `<div class="vacio"><i class="fa-solid fa-inbox"></i>
+           <strong>No hay alertas con estos filtros</strong>
+           <p>Pruebe con otro tipo o estado.</p></div>`;
+  }
+
+  $("filtroTipo").addEventListener("change", renderAlertas);
+  $("filtroEstado").addEventListener("change", renderAlertas);
+
+  /* =======================================================================
+     9. PANTALLA 3: PANEL DE ADMINISTRACIÓN
+     ======================================================================= */
+  function renderAdmin() {
+    if (!esAdmin()) return;
+    const estado = $("admFiltro").value;
+    const lista = ordenarRecientes(cargar().filter((r) => !estado || r.estado === estado));
+
+    $("listaAdmin").innerHTML = lista.length
+      ? lista.map((r) => tarjetaAlerta(r, true)).join("")
+      : `<div class="vacio"><i class="fa-solid fa-folder-open"></i>
+           <strong>No hay reportes en esta categoría</strong>
+           <p>Los reportes nuevos aparecerán aquí.</p></div>`;
+  }
+
+  $("admFiltro").addEventListener("change", renderAdmin);
+
+  $("listaAdmin").addEventListener("click", async (e) => {
+    const boton = e.target.closest("button[data-acc]");
+    if (!boton || !esAdmin()) return;
+
+    const lista = cargar();
+    const r = lista.find((x) => x.id === boton.dataset.id);
+    if (!r) return;
+
+    switch (boton.dataset.acc) {
+      case "verificar":
+        r.estado = "verificado";
+        guardar(lista);
+        toast("success", "Reporte verificado", "Ahora aparece como confirmado en el mapa.");
+        break;
+
+      case "eliminar": {
+        const ok = await confirmar({
+          titulo: "¿Eliminar este reporte?",
+          texto: "Dejará de aparecer en la lista pública. Podrá restaurarlo después.",
+          peligro: true,
+          textoBoton: "Eliminar"
+        });
+        if (!ok) return;
+        r.estado = "eliminado";
+        guardar(lista);
+        toast("warning", "Reporte eliminado", "Se retiró de la lista pública.");
+        break;
+      }
+
+      case "restaurar":
+        r.estado = "pendiente";
+        guardar(lista);
+        toast("info", "Reporte restaurado", "Quedó nuevamente en estado pendiente.");
+        break;
+    }
+    renderTodo();
+  });
+
+  $("btnDemo").addEventListener("click", async () => {
+    const ok = await confirmar({
+      titulo: "¿Cargar datos de prueba?",
+      texto: "Se agregarán cinco reportes de ejemplo a la base local.",
+      textoBoton: "Cargar"
+    });
+    if (!ok) return;
+
+    const tipos = ["Robo", "Ruido", "Sospechoso"];
+    const barrios = ["Centro", "Belén", "Techitos", "La Pola", "Ambalá", "Jordán"];
+    const textos = {
+      Robo: "Hurto de celular a plena luz del día.",
+      Ruido: "Música a alto volumen después de las 11 p.m.",
+      Sospechoso: "Dos personas merodeando en motocicleta sin placa visible."
+    };
+
+    const lista = cargar();
+    for (let i = 0; i < 5; i++) {
+      const tipo = tipos[Math.floor(Math.random() * tipos.length)];
+      const c = coordenadaAleatoria();
+      lista.push({
+        id: Date.now().toString(36) + "d" + i,
+        tipo,
+        descripcion: textos[tipo],
+        barrio: barrios[Math.floor(Math.random() * barrios.length)],
+        lat: c.lat,
+        lng: c.lng,
+        estado: "pendiente",
+        creado: new Date(Date.now() - i * 3600000).toISOString()
+      });
+    }
+    guardar(lista);
+    renderTodo();
+    toast("success", "Datos de prueba cargados", "Se agregaron 5 reportes.");
+  });
+
+  $("btnBorrar").addEventListener("click", async () => {
+    const ok = await confirmar({
+      titulo: "¿Borrar todos los datos?",
+      texto: "Se eliminarán todos los reportes guardados en este navegador. Esta acción no se puede deshacer.",
+      peligro: true,
+      textoBoton: "Borrar todo"
+    });
+    if (!ok) return;
+    localStorage.removeItem(CLAVE_DB);
+    renderTodo();
+    toast("warning", "Datos eliminados", "La base local está vacía.");
+  });
+
+  /* =======================================================================
+     10. RENDER GENERAL
+     ======================================================================= */
+  function renderTodo() {
+    if (!sesionActual()) return;
+    renderAlertas();
+    renderAdmin();
+  }
+
+  /* =======================================================================
+     11. INICIO
+     ======================================================================= */
+  if (sesionActual() && USUARIOS[sesionActual().usuario]) {
+    mostrarApp();
+  } else {
+    $("pantallaLogin").hidden = false;
+  }
+})();
+</script>
+</body>
+</html>
